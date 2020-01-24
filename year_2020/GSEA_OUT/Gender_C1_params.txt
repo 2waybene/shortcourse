@@ -1,0 +1,25 @@
+Run of GSEA on  2016-07-20 19:38:22
+input.ds= GSEA/dt_no_duplicate.gct
+input.cls= GSEA/gender_label_word.cls
+gene.ann = 
+gs.db= GSEA/c4.cm.v5.1.symbols.gmt
+gs.ann = 
+output.directory = GSEA_OUT/
+doc.string =  Gender_C1
+non.interactive.run = FALSE
+reshuffling.type = sample.labels
+nperm = 1000
+weighted.score.type = 1
+nom.p.val.threshold = -1
+fwer.p.val.threshold = -1
+fdr.q.val.threshold = 0.25
+topgs = 20
+adjust.FDR.q.val = FALSE
+gs.size.threshold.min = 15
+gs.size.threshold.max = 500
+reverse.sign = FALSE
+preproc.type = 0
+random.seed = 111
+perm.type = 0
+fraction = 1
+replace = FALSE
