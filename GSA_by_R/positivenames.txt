@@ -1,7 +1,0 @@
-[1] "P63 target genes"
-[1] "Keratinized layer"
-[1] "Basal layer"
-[1] "EDC"
-[1] "Spinous layer"
-[1] "Pax9 target genes"
-[1] "Basal lamina"
