@@ -1,0 +1,4 @@
+[1] "Nrf2/Keap1 pathway"
+[1] "Sox2 target genes in esophagus"
+[1] "Gap junction"
+[1] "Tight junction"

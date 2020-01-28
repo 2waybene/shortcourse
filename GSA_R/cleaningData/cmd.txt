@@ -1,0 +1,25 @@
+## This is a log for examining the files
+
+cp  Knowledge_based_gene_sets_20140627.gmt genset_1.txt 
+diff Knowledge_based_gene_sets_20140627.gmt genset_1.txt 
+
+cp genset_1.txt genset_1_mod.txt
+#Modify genset_1_mod.txt by adding a new line
+
+diff Knowledge_based_gene_sets_20140627.gmt genset_1_mod.txt 
+
+#Further, add "na" as the category and rename the last genelist to V2Sox
+cp genset_1_mod.txt genset_1_mod_2.txt
+
+diff genset_1_mod.txt genset_1_mod_2.txt 
+
+## genset_2_correct.txt does NOT work but genset_2_correct_from_1.txt works!!
+
+diff genset_2_correct.txt genset_2_correct_from_1.txt
+
+## Create a file from genset_2_correct.txt but append last two sets to see how it
+## performs
+
+cat  genset_2_correct.txt genset_2_correct_from_1.txt  > temp.txt
+diff temp.txt genset_2_correct_from_1.txt 
+
