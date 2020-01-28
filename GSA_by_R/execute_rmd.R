@@ -20,6 +20,7 @@ rmarkdown::render("x:/project2016/GoldenGateProject/RmdProj1/proj1_in_pdf.rmd", 
 params$genStatus
 
 setwd("X:/project2016/GSA_by_R")
+setwd("/Users/li11/myGit/shortcourse/GSA_by_R/")
 
 render("GSA_4_Chen_v2.rmd", output_file = "GSA_4_Chen_v2_v1.html")
 
