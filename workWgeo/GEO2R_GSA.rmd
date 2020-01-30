@@ -1,0 +1,300 @@
+---
+title: 'This is a note for working on a GEO data'
+author: 'Jianying Li'
+date: '30 January 2020'
+output:
+  html_document:
+    number_sections: true
+    toc: true
+    fig_width: 7
+    fig_height: 4.5
+    theme: readable
+    highlight: tango
+---
+
+# Introduction
+
+Yicheng helped David in Dr. Chen's lab to write a SAM-GSA code for microarray analysis. Here is a note for such analysis.
+
+Here are the files that are needed for the analysis
+
+* Normalized microarray data
+* GSA geneset
+* This program.
+
+# Load and check data
+
+```{r, message = FALSE}
+# Load packages
+library(samr)
+library(GSA)
+library(Biobase)
+library(GEOquery)
+```
+
+Now that our packages are loaded, let's read in and take a peek at the data.
+Download a sample Microarray Data from GEO, with code inherited from GEO2R
+```{r, message=FALSE, warning=FALSE}
+
+
+# load series and platform data from GEO
+
+gset <- getGEO("GSE18842", GSEMatrix =TRUE, getGPL=FALSE)
+if (length(gset) > 1) idx <- grep("GPL570", attr(gset, "names")) else idx <- 1
+gset <- gset[[idx]]
+
+# group names for all samples in a series
+gsms <- paste0("10101101010101011010101010101010010110101010101101",
+               "01000001010101010101010010110101110101010")
+sml <- c()
+for (i in 1:nchar(gsms)) { sml[i] <- substr(gsms,i,i) }
+sml <- paste("G", sml, sep="")  #set group names
+
+# order samples by group
+ex <- exprs(gset)[ , order(sml)]
+sml <- sml[order(sml)]
+fl <- as.factor(sml)
+labels <- c("control","tumor")
+
+```
+
+# Examine by plot
+```{r, message=FALSE, warning=FALSE}
+# set parameters and draw the plot
+palette(c("#dfeaf4","#f4dfdf", "#AABBCC"))
+dev.new(width=4+dim(gset)[[2]]/5, height=6)
+par(mar=c(2+round(max(nchar(sampleNames(gset)))/2),4,2,1))
+title <- paste ("GSE18842", '/', annotation(gset), " selected samples", sep ='')
+boxplot(ex, boxwex=0.6, notch=T, main=title, outline=FALSE, las=2, col=fl)
+legend("topleft", labels, fill=palette(), bty="n")
+```
+
+
+
+# Running SAM analysis
+
+```{r, message=FALSE, warning=FALSE}
+#Getting the class label
+
+y <- rep ("1", dim(ex)[2])
+y[sml %in% "G1"] = 2
+y
+samfit <- SAM(as.matrix(ex), y, resp.type = "Two class unpaired")
+plot(samfit)
+```
+
+
+
+Prepare files for GSA now
+
+```{r, message=FALSE, warning=FALSE}
+
+affyProb2Symbols <- function (aListOfProbes, db = hgu133plus2.db)
+{
+  require(magrittr)
+  require(hgu133plus2.db)
+  probeAnnoted <- AnnotationDbi::select(
+    x       = db,
+    keys    = aListOfProbes,
+    columns = c("PROBEID", "ENSEMBL", "ENTREZID", "SYMBOL"),
+    keytype = "PROBEID"
+  )
+  return (probeAnnoted )
+}
+
+#x = as.matrix(ex)
+
+geneAnnoated <- affyProb2Symbols(tolower(rownames(ex)))
+library(tidyverse)
+filtered = geneAnnoated %>% distinct(PROBEID, .keep_all = TRUE)
+#genenames = filtered$SYMBOL
+#paste ("g", 1:dim(ex)[1], sep="")
+
+data <- list(x = as.matrix(ex), y = y, geneid = paste ("g", 1:dim(ex)[1], sep=""), genenames = filtered$SYMBOL, logged2 = TRUE)
+
+```
+
+# Working on GSA
+## Basic set up
+
+```{r , message=FALSE, warning=FALSE}
+
+## Setting the random seed for future validation
+set.seed(1234567)
+
+```
+
+
+## Load gene set database
+
+
+```{r , message=FALSE, warning=FALSE}
+
+
+clean.gmt.data <- function (db)
+{
+# db <- c1 
+# str(db)
+# db$geneset.names
+# db$geneset.descriptions
+ temp.geneset <- c(list())
+ for (i in 1:length(db$genesets))
+ {
+   temp.geneset[[i]] <- db$genesets[[i]]
+   if (length(which(temp.geneset[[i]]=="")) > 0 )
+   {
+      temp.geneset[[i]]  <- temp.geneset[[i]][-which(temp.geneset[[i]]=="")]
+   }
+ }
+ db$genesets <- temp.geneset 
+ return (db)
+}
+
+## Rename "Knowledge based gene sets (20161005).gmt" to geneset_2.gmt
+#c1 <- GSA.read.gmt("genset_2.gmt") 
+
+# original file
+c1 <- GSA.read.gmt("X:/myGit/shortcourse/GSA_R/Knowledge_based_gene_sets_20161005.gmt")
+#c1 <- GSA.read.gmt("cleaningData/genset_2_correct.txt")
+#c1 <- GSA.read.gmt("cleaningData/genset_2_correct_from_1.txt")
+#c1 <- GSA.read.gmt("cleaningData/genset_2.txt")
+# GSA.read.gmt constructs a list of 3
+
+c1.cleaned <- clean.gmt.data(c1)
+str(c1)
+str(c1$genesets)
+
+print ("Gene sets in database file (20161005).gmt")
+c1$geneset.names
+
+```
+
+## Run GSA
+
+
+```{r  results = 'hide', message=FALSE, warning=FALSE}
+c1 <- c1.cleaned
+
+
+#data <- list(x = as.matrix(ex), y = y, geneid = paste ("g", 1:dim(ex)[1], sep=""), genenames = filtered$SYMBOL, logged2 = TRUE)
+
+
+gsafit <- GSA(as.matrix(ex), y, c1$genesets, genenames = filtered$SYMBOL, resp.type = "Two class unpaired", nperms = 1000)
+
+## Do I need the unique gene symbol??
+#gsafit <- GSA(x, y, c1$genesets, unique(z$GeneSymbol), resp.type = "Two class unpaired", nperms = 1000)
+
+
+str(gsafit)
+plot(gsafit$GSA.scores)
+
+```
+
+
+
+```{r ,  message=FALSE, warning=FALSE}
+gsafit$fdr.lo
+gsafit$fdr.hi
+
+# To many and will NOT print it to the html file
+# gsafit$gene.scores
+
+GSA.plot(gsafit)
+
+GSA.listsets(gsafit, c1$geneset.names, FDRcut=.5)
+
+GSA.correlate(c1$genesets, filtered$SYMBOL)
+gsa2 <- GSA.func(as.matrix(ex), y, c1$genesets, filtered$SYMBOL, resp.type = "Two class unpaired")
+#gsa2 <- GSA.func(x, y, c1$genesets, unique(z$GeneSymbol), resp.type = "Two class unpaired")
+str(gsa2)
+
+
+
+```
+
+## More on GSA
+
+
+```{r , message=FALSE, warning=FALSE}
+
+
+
+#for loop from 1:length(gsals$negative[,1])
+GSA.genescores(5, c1$genesets, gsafit, z$GeneSymbol)
+GSA.plot(gsafit, fac = 1, FDRcut = 1)
+
+gsals <- GSA.listsets(gsafit, c1$geneset.names, FDRcut=.5)
+str(gsals)
+str(gsals$negative)
+gsals$negative[,1]
+length(gsals$negative[,1])
+as.numeric(gsals$negative[,1][1])
+GSA.genescores(as.numeric(gsals$negative[,1][1]), c1$genesets, gsafit, z$GeneSymbol)
+
+
+```
+
+
+## Export results
+
+
+```{r , message=FALSE, warning=FALSE}
+## sink() function does not work well with rmarkdown, 
+
+#sink("V1-GSA-TF-negative.txt")
+
+for (i in 1:length(gsals$negative[,1])){
+  print(gsals$negative[,2][i])
+  print(GSA.genescores(as.numeric(gsals$negative[,1][i]),
+                 c1$genesets, gsafit, filtered$SYMBOL))
+  cat("\n")
+  
+}
+#sink()
+
+#sink("V1-GSA-TF-positive.txt")
+
+for (i in 1:length(gsals$positive[,1])){
+  print(gsals$positive[,2][i])
+  print(GSA.genescores(as.numeric(gsals$positive[,1][i]),
+                       c1$genesets, gsafit, filtered$SYMBOL))
+  cat("\n")
+  
+}
+#sink()
+
+#print GSA -TF output
+#sink("V1-GSA-TF-output.txt")
+print(GSA.listsets(gsafit, c1$geneset.names, FDRcut=.5))
+#sink()
+
+#Print negative names
+
+#sink("v2-negativenames.txt")
+print ("Negaivie names")
+for (i in as.numeric(gsals$negative[,1])){
+  print(c1$geneset.names[i])
+  
+}
+#sink()
+
+#print positivenames
+
+#sink("V1-positivenames.txt")
+print ("Positivie names")
+for (i in as.numeric(gsals$positive[,1])){
+  print(c1$geneset.names[i])
+  
+}
+#sink()
+
+```
+
+
+# Conclusion
+
+This is a valid way to document analysis.
+
+---
+
+
