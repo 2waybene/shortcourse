@@ -41,7 +41,8 @@ Microarray Data
 
 #setwd("/Users/jianyingli/GSA_R/")
 #setwd("x:/project2016/GSA_by_R/")
-setwd("/Users/li11/myGit/shortcourse/GSA_by_R/")
+#setwd("/Users/li11/myGit/shortcourse/GSA_by_R/")
+setwd("X:/myGit/shortcourse/GSA_R/")
 x1 <- read.csv("NormedMicroarray.csv")
 
 # check data

@@ -68,13 +68,6 @@ length(which(limma.all$adj.P.Val <= 0.05))
 GSE18842.limma.all = limma.all[which(limma.all$adj.P.Val <= 0.05),]
 str(GSE18842.limma.all)
 
-geneAnnoated <- affyProb2Symbols(tolower(GSE18842.limma.all$ID))
-library(tidyverse)
-filtered = geneAnnoated %>% distinct(PROBEID, .keep_all = TRUE)
-head(filtered)
-dim(filtered)
-
-
 ##=====================================
 ##  Prepare files for GSA now
 ##=====================================

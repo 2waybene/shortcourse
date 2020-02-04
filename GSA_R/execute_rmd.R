@@ -19,11 +19,13 @@ rmarkdown::render("x:/project2016/GoldenGateProject/RmdProj1/proj1_in_pdf.rmd", 
 
 params$genStatus
 
-setwd("X:/project2016/GSA_by_R")
-setwd("/Users/li11/myGit/shortcourse/GSA_by_R/")
-
+#setwd("X:/project2016/GSA_by_R")
+#setwd("/Users/li11/myGit/shortcourse/GSA_by_R/")
+setwd("X:/myGit/shortcourse/GSA_R/")
 render("GSA_4_Chen_v2.rmd", output_file = "GSA_4_Chen_v2_v1.html")
 
+setwd("X:/myGit/shortcourse/workWgeo/")
+render("GEO2R_GSA.rmd", output_file = "GEO2R_GSA_v1.html")
 
 ##  Let's see what is going on
 render("GSA_4_Chen_data2_invest.rmd", output_file = "GSA_4_Chen_v2_original.html")

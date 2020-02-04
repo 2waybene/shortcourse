@@ -67,7 +67,7 @@ kpn[which(names(kpn) %in% "path:hsa05216")]
 ###################################################
 load(system.file("extdata/E-GEOD-21942.topTable.RData", package = "ROntoTools"))
 head(top)
-
+str(top)
 
 ###################################################
 ### code chunk number 10: rontotools.Rnw:127-136
