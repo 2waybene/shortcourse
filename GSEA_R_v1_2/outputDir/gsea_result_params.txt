@@ -1,0 +1,27 @@
+Run of GSEA on  1580828986
+input.ds = C:/Users/li11/Documents/R/win-library/3.6/GSEA/extdata/Leukemia_hgu95av2.gct
+input.cls = C:/Users/li11/Documents/R/win-library/3.6/GSEA/extdata/Leukemia.cls
+gene.ann = 
+gs.db = C:/Users/li11/Documents/R/win-library/3.6/GSEA/extdata/h.all.v7.0.symbols.gmt
+gs.ann = 
+input.chip = C:/Users/li11/Documents/R/win-library/3.6/GSEA/extdata/Human_AFFY_HG_U95_MSigDB_7_0_final.chip
+collapse.mode = 2
+output.directory = X:/myGit/shortcourse/GSEA_R_v1_2/outputDir//
+doc.string =  gsea_result
+reshuffling.type = sample.labels
+nperm = 1000
+weighted.score.type = 1
+nom.p.val.threshold = -1
+fwer.p.val.threshold = -1
+fdr.q.val.threshold = 0.25
+topgs = 20
+adjust.FDR.q.val = FALSE
+gs.size.threshold.min = 15
+gs.size.threshold.max = 500
+reverse.sign = FALSE
+preproc.type = 0
+random.seed = 1580828986
+perm.type = 0
+rank.metric =  S2N
+fraction = 1
+replace = FALSE
