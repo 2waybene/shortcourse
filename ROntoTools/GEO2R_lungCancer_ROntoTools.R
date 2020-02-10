@@ -236,7 +236,7 @@ peSummary <- Summary(peRes, pathNames = kpn, totalAcc = FALSE, totalPert = FALSE
 write.table (list (KEGG = peSummary$pathNames), file = "x:/project2019/RNAseqProj/ESCC/lungCancer/pathway.txt", sep = "\t", row.names = FALSE)
 peSummary[13,]
 
-
+peSummary[peSummary$pathNames %in% "Non-small cell lung cancer", ]
 ###################################################
 ### code chunk number 16: peRes_twoway1
 ###################################################
@@ -323,6 +323,30 @@ renderGraph(g)
 ### Non-small cell lung cancer
 ###################################################
 p <- peRes@pathways[["path:hsa05223"]]
+g <- layoutGraph(p@map, layoutType = "dot")
+graphRenderInfo(g) <- list(fixedsize = FALSE)
+edgeRenderInfo(g) <- peEdgeRenderInfo(p)
+nodeRenderInfo(g) <- peNodeRenderInfo(p)
+renderGraph(g)
+
+
+
+###################################################
+### PPAR signaling pathway
+###################################################
+p <- peRes@pathways[["path:hsa03320"]]
+g <- layoutGraph(p@map, layoutType = "dot")
+graphRenderInfo(g) <- list(fixedsize = FALSE)
+edgeRenderInfo(g) <- peEdgeRenderInfo(p)
+nodeRenderInfo(g) <- peNodeRenderInfo(p)
+renderGraph(g)
+
+
+###################################################
+##  path:hsa04015                                        Rap1 signaling pathway 0.004975124 0.02510702
+###################################################
+
+p <- peRes@pathways[["path:hsa04015"]]
 g <- layoutGraph(p@map, layoutType = "dot")
 graphRenderInfo(g) <- list(fixedsize = FALSE)
 edgeRenderInfo(g) <- peEdgeRenderInfo(p)
